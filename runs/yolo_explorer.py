@@ -66,7 +66,9 @@ while frame_id < num_frames:
                     yc = (y + h / 2) / frame.shape[0]
                     wn = w / frame.shape[1]
                     hn = h / frame.shape[0]
-                    f.write(f"{class_name} {class_id} {xc} {yc} {wn} {hn}\n")
+                    #f.write(f"{class_name} {class_id} {xc} {yc} {wn} {hn}\n")
+                    f.write(f"{class_id} {xc} {yc} {wn} {hn}\n")
+                    
             else:
                 f.write("")  # YOLO erwartet Textdatei, auch wenn leer
 
