@@ -12,17 +12,33 @@ game.load_config(vzd.scenarios_path + "/deathmatch.cfg")
 game.set_window_visible(True)
 game.set_labels_buffer_enabled(True)
 game.set_objects_info_enabled(True)
-game.init()
 
-num_frames = 500
+game.add_game_args("+sv_cheats 1 +god 1 +timelimit 999")
+
+game.init()
+num_frames = 5000
 n_buttons = game.get_available_buttons_size()
 
 game.new_episode()
 frame_id = 0
 
+ENEMY_CLASSES = {
+    "DoomPlayer",
+    "Zombieman",
+    "ShotgunGuy",
+    "ChaingunGuy",
+    "Demon",
+    "Spectre",
+    "Imp",
+    "Cacodemon",
+    "BaronOfHell",
+    "HellKnight"
+}
+
 while frame_id < num_frames:
-    time.sleep(0.03)
-    
+    time.sleep(0.01)
+    game.send_game_command("give health 1")
+
     # Zufällige Aktion
     action = np.zeros(n_buttons, dtype=int)
     
@@ -61,13 +77,19 @@ while frame_id < num_frames:
                 for label in labels:
                     class_id = label.object_id
                     class_name = label.object_name
+
+                    if class_name not in ENEMY_CLASSES:
+                        continue
+
                     x, y, w, h = label.x, label.y, label.width, label.height
                     xc = (x + w / 2) / frame.shape[1]
                     yc = (y + h / 2) / frame.shape[0]
                     wn = w / frame.shape[1]
                     hn = h / frame.shape[0]
-                    #f.write(f"{class_name} {class_id} {xc} {yc} {wn} {hn}\n")
-                    f.write(f"{class_id} {xc} {yc} {wn} {hn}\n")
+                    if w < 10 or h < 10:
+                        continue
+                    f.write(f"{class_name} {class_id} {xc} {yc} {wn} {hn}\n")
+                    #f.write(f"{class_id} {xc} {yc} {wn} {hn}\n")
                     
             else:
                 f.write("")  # YOLO erwartet Textdatei, auch wenn leer
